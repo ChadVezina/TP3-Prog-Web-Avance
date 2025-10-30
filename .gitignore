@@ -1,0 +1,70 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# Vite / Vue (build outputs & cache)
+dist/
+.vite/
+out/
+build/
+public/build/
+.cache/
+.parcel-cache/
+
+# Environment / secrets
+.env
+.env.*.local
+.env.local
+!.env.example
+
+# Logs
+logs/
+*.log
+*.log.*
+/log/*
+
+# Coverage / test
+coverage/
+.nyc_output/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Database / dumps / histories (MySQL / local DB)
+*.sql
+*.sql.gz
+*.sqlite
+*.sqlite3
+.mysql_history
+.node_repl_history
+
+# Build artifacts / server bundles
+dist/
+build/
+out/
+server/dist/
+
+# TLS / keys / certs
+*.pem
+*.key
+*.crt
+
+# Docker / local config
+docker-compose.override.yml
+
+# Misc
+storybook-static/
+coverage/
