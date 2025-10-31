@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
 import ForfaitsDataService from "../services/ForfaitsDataService.js";
 
 const forfaits = ref([]);
 const loading = ref(false);
 const error = ref(null);
 
-const showForm = ref(false);
 const formData = ref({
   nom: "",
   description: "",
@@ -15,6 +15,7 @@ const formData = ref({
   categorie: "",
 });
 const editingId = ref(null);
+const showEditForm = ref(false);
 const categories = ref([
   "Europe",
   "Amérique",
@@ -50,13 +51,6 @@ onMounted(() => {
   chargerForfaits();
 });
 
-const toggleForm = () => {
-  showForm.value = !showForm.value;
-  if (!showForm.value) {
-    resetForm();
-  }
-};
-
 const resetForm = () => {
   formData.value = {
     nom: "",
@@ -66,37 +60,13 @@ const resetForm = () => {
     categorie: "",
   };
   editingId.value = null;
-};
-
-/**
- * Ajoute un nouveau forfait via l'API
- */
-const ajouterForfait = async () => {
-  if (formData.value.nom && formData.value.description && formData.value.prix) {
-    try {
-      const response = await ForfaitsDataService.create({
-        nom: formData.value.nom,
-        description: formData.value.description,
-        prix: parseFloat(formData.value.prix),
-        image: formData.value.image,
-        categorie: formData.value.categorie,
-      });
-
-      // Ajouter le forfait créé à la liste
-      forfaits.value.unshift(response.data || response);
-      resetForm();
-      showForm.value = false;
-    } catch (err) {
-      console.error("Erreur lors de l'ajout du forfait:", err);
-      error.value = "Erreur lors de l'ajout du forfait";
-    }
-  }
+  showEditForm.value = false;
 };
 
 const editerForfait = (forfait) => {
   editingId.value = forfait.id;
   formData.value = { ...forfait };
-  showForm.value = true;
+  showEditForm.value = true;
 };
 
 /**
@@ -123,7 +93,6 @@ const sauvegarderModification = async () => {
     }
 
     resetForm();
-    showForm.value = false;
   } catch (err) {
     console.error("Erreur lors de la modification du forfait:", err);
     error.value = "Erreur lors de la modification du forfait";
@@ -193,25 +162,19 @@ const formatPrix = (val) => {
     <!-- Contenu principal -->
     <div v-else>
       <div class="mb-8">
-        <button
-          @click="toggleForm"
-          class="px-6 py-3 bg-green-600 text-white rounded cursor-pointer text-base mb-4 transition-colors hover:bg-green-700"
+        <RouterLink
+          to="/forfaits/ajouter"
+          class="inline-block px-6 py-3 bg-green-600 text-white rounded cursor-pointer text-base mb-4 transition-colors hover:bg-green-700 no-underline"
         >
-          {{ showForm ? "Annuler" : "Ajouter un forfait" }}
-        </button>
+          + Ajouter un forfait
+        </RouterLink>
 
-        <!-- Formulaire d'ajout/modification -->
-        <div v-if="showForm" class="bg-gray-100 p-6 rounded">
+        <!-- Formulaire de modification -->
+        <div v-if="showEditForm" class="bg-gray-100 p-6 rounded mt-4">
           <h2 class="text-xl font-semibold text-gray-600 mb-6">
-            {{
-              editingId ? "Modifier le forfait" : "Ajouter un nouveau forfait"
-            }}
+            Modifier le forfait
           </h2>
-          <form
-            @submit.prevent="
-              editingId ? sauvegarderModification() : ajouterForfait()
-            "
-          >
+          <form @submit.prevent="sauvegarderModification">
             <div class="mb-4">
               <label for="nom" class="block mb-2 font-bold text-gray-800"
                 >Nom du forfait:</label
@@ -277,12 +240,21 @@ const formatPrix = (val) => {
                 </option>
               </select>
             </div>
-            <button
-              type="submit"
-              class="px-6 py-3 bg-blue-600 text-white rounded text-base transition-colors hover:bg-blue-700"
-            >
-              {{ editingId ? "Modifier" : "Ajouter" }}
-            </button>
+            <div class="flex gap-2">
+              <button
+                type="submit"
+                class="px-6 py-3 bg-blue-600 text-white rounded text-base transition-colors hover:bg-blue-700"
+              >
+                Modifier
+              </button>
+              <button
+                type="button"
+                @click="resetForm"
+                class="px-6 py-3 bg-gray-500 text-white rounded text-base transition-colors hover:bg-gray-600"
+              >
+                Annuler
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -329,7 +301,7 @@ const formatPrix = (val) => {
 
           <!-- Prix -->
           <p class="text-2xl text-green-600 font-bold mb-4">
-                    ${{ formatPrix(forfait.prix) }}
+            ${{ formatPrix(forfait.prix) }}
           </p>
 
           <!-- Dates -->

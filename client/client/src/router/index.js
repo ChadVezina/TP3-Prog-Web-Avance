@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Accueil from '../pages/Accueil.vue';
 import Forfaits from '../pages/Forfaits.vue';
 import APropos from '../pages/APropos.vue';
+import AjouterForfait from '../pages/AjouterForfait.vue';
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     path: '/forfaits',
     name: 'Forfaits',
     component: Forfaits
+  },
+  {
+    path: '/forfaits/ajouter',
+    name: 'AjouterForfait',
+    component: AjouterForfait
   },
   {
     path: '/a-propos',
