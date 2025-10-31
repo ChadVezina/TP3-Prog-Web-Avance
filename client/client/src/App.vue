@@ -1,11 +1,15 @@
 <script setup>
+import FooterSection from "./components/FooterSection.vue";
 </script>
 
 <template>
-  <div id="app" class="min-h-screen bg-gray-50">
-    <nav class="bg-gray-800 py-4 shadow">
+  <div id="app" class="min-h-screen bg-gray-50 flex flex-col">
+    <nav class="bg-gray-800 py-4 shadow relative z-50">
       <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <router-link to="/" class="text-white text-xl font-bold transition-colors hover:text-blue-500">
+        <router-link
+          to="/"
+          class="text-white text-xl font-bold transition-colors hover:text-blue-500"
+        >
           Agence de Voyage
         </router-link>
         <ul class="flex list-none gap-8">
@@ -39,10 +43,9 @@
         </ul>
       </div>
     </nav>
-    <main class="max-w-6xl mx-auto px-4">
+    <main class="max-w-6xl mx-auto px-4 flex-1">
       <router-view />
     </main>
+    <FooterSection />
   </div>
 </template>
-
-

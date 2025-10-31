@@ -18,17 +18,18 @@
 </template>
 
 <script setup>
-
-import { computed } from 'vue';
+import { computed } from "vue";
 const props = defineProps({
-  modelValue: { type: String, default: '' },
-  id: { type: String, default: '' },
-  label: { type: String, default: '' },
+  modelValue: { type: String, default: "" },
+  id: { type: String, default: "" },
+  label: { type: String, default: "" },
   options: { type: Array, default: () => [] },
-  placeholder: { type: String, default: 'Sélectionnez une option' },
+  placeholder: { type: String, default: "Sélectionnez une option" },
 });
 
 const selectClass = computed(() => {
-  return props.modelValue ? 'border-gray-300 focus:ring-blue-500' : 'border-gray-300 focus:ring-blue-500';
+  return props.modelValue
+    ? "border-gray-300 focus:ring-blue-500"
+    : "border-gray-300 focus:ring-blue-500";
 });
 </script>

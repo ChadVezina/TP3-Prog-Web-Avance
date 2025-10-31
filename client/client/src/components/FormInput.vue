@@ -23,23 +23,25 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 const props = defineProps({
   modelValue: [String, Number],
-  id: { type: String, default: '' },
-  label: { type: String, default: '' },
-  type: { type: String, default: 'text' },
-  placeholder: { type: String, default: '' },
+  id: { type: String, default: "" },
+  label: { type: String, default: "" },
+  type: { type: String, default: "text" },
+  placeholder: { type: String, default: "" },
   required: { type: Boolean, default: false },
-  error: { type: String, default: '' },
-  help: { type: String, default: '' },
+  error: { type: String, default: "" },
+  help: { type: String, default: "" },
   step: { type: [String, Number], default: undefined },
   min: { type: [String, Number], default: undefined },
 });
 
 const inputClass = computed(() => {
-  const base = 'border-gray-300';
-  const errorClass = props.error ? 'border-red-600 focus:ring-red-300' : 'focus:ring-blue-500';
+  const base = "border-gray-300";
+  const errorClass = props.error
+    ? "border-red-600 focus:ring-red-300"
+    : "focus:ring-blue-500";
   return `${base} ${errorClass}`;
 });
 </script>

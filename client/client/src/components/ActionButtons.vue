@@ -22,8 +22,8 @@
 <script setup>
 defineProps({
   loading: { type: Boolean, default: false },
-  submitLabel: { type: String, default: 'Ajouter le forfait' },
-  submittingLabel: { type: String, default: 'Ajout en cours...' },
-  cancelLabel: { type: String, default: 'Annuler' },
+  submitLabel: { type: String, default: "Ajouter le forfait" },
+  submittingLabel: { type: String, default: "Ajout en cours..." },
+  cancelLabel: { type: String, default: "Annuler" },
 });
 </script>

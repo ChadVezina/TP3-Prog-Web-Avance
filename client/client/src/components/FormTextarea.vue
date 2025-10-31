@@ -20,20 +20,22 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 const props = defineProps({
-  modelValue: { type: String, default: '' },
-  id: { type: String, default: '' },
-  label: { type: String, default: '' },
-  placeholder: { type: String, default: '' },
+  modelValue: { type: String, default: "" },
+  id: { type: String, default: "" },
+  label: { type: String, default: "" },
+  placeholder: { type: String, default: "" },
   rows: { type: [String, Number], default: 4 },
   required: { type: Boolean, default: false },
-  error: { type: String, default: '' },
+  error: { type: String, default: "" },
 });
 
 const textareaClass = computed(() => {
-  const base = 'border-gray-300';
-  const errorClass = props.error ? 'border-red-600 focus:ring-red-300' : 'focus:ring-blue-500';
+  const base = "border-gray-300";
+  const errorClass = props.error
+    ? "border-red-600 focus:ring-red-300"
+    : "focus:ring-blue-500";
   return `${base} ${errorClass}`;
 });
 </script>
