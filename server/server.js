@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mysql from "mysql2";
 import { config } from "dotenv";
-import * as ForfaitModel from "./models/forfaitModel.js";
+import forfaitsRouter from "./routes/forfaits.js";
 
 config();
 
@@ -32,91 +32,14 @@ if (process.env.DB_HOST) {
   });
 }
 
-
-app.get("/api/forfaits", async (req, res) => {
-  try {
-    const forfaits = await ForfaitModel.getAllForfaits(db);
-    res.json(forfaits);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des forfaits:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
+// Middleware pour attacher la connexion db à chaque requête
+app.use((req, res, next) => {
+  req.db = db;
+  next();
 });
 
-
-app.get("/api/forfaits/:id", async (req, res) => {
-  try {
-    const forfait = await ForfaitModel.getForfaitById(db, req.params.id);
-    res.json(forfait);
-  } catch (error) {
-    console.error("Erreur lors de la récupération du forfait:", error);
-    if (error.message === "Forfait non trouvé") {
-      res.status(404).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Erreur serveur" });
-    }
-  }
-});
-
-app.get("/api/forfaits/categorie/:categorie", async (req, res) => {
-  try {
-    const forfaits = await ForfaitModel.getForfaitsByCategorie(db, req.params.categorie);
-    res.json(forfaits);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des forfaits par catégorie:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
-});
-
-
-app.post("/api/forfaits", async (req, res) => {
-  try {
-    const forfait = await ForfaitModel.createForfait(db, req.body);
-    res.status(201).json(forfait);
-  } catch (error) {
-    console.error("Erreur lors de la création du forfait:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
-});
-
-app.put("/api/forfaits/:id", async (req, res) => {
-  try {
-    const forfait = await ForfaitModel.updateForfait(db, req.params.id, req.body);
-    res.json(forfait);
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour du forfait:", error);
-    if (error.message === "Forfait non trouvé") {
-      res.status(404).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Erreur serveur" });
-    }
-  }
-});
-
-
-app.delete("/api/forfaits/:id", async (req, res) => {
-  try {
-    const result = await ForfaitModel.deleteForfait(db, req.params.id);
-    res.json(result);
-  } catch (error) {
-    console.error("Erreur lors de la suppression du forfait:", error);
-    if (error.message === "Forfait non trouvé") {
-      res.status(404).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Erreur serveur" });
-    }
-  }
-});
-
-app.get("/api/forfaits/search/:term", async (req, res) => {
-  try {
-    const forfaits = await ForfaitModel.searchForfaits(db, req.params.term);
-    res.json(forfaits);
-  } catch (error) {
-    console.error("Erreur lors de la recherche des forfaits:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
-});
+// Utiliser le routeur des forfaits
+app.use("/api/forfaits", forfaitsRouter);
 
 const PORT = process.env.PORT || 3000;
 
