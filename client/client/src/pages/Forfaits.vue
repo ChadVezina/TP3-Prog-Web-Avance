@@ -1,31 +1,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import ForfaitsDataService from "../services/ForfaitsDataService.js";
+
+const router = useRouter();
 
 const forfaits = ref([]);
 const loading = ref(false);
 const error = ref(null);
-
-const formData = ref({
-  nom: "",
-  description: "",
-  prix: "",
-  image: "",
-  categorie: "",
-});
-const editingId = ref(null);
-const showEditForm = ref(false);
-const categories = ref([
-  "Europe",
-  "Amérique",
-  "Afrique",
-  "Asie",
-  "Plage",
-  "Nature",
-  "Aventure",
-  "Autre",
-]);
 
 /**
  * Récupère la liste de tous les forfaits depuis l'API
@@ -51,52 +33,11 @@ onMounted(() => {
   chargerForfaits();
 });
 
-const resetForm = () => {
-  formData.value = {
-    nom: "",
-    description: "",
-    prix: "",
-    image: "",
-    categorie: "",
-  };
-  editingId.value = null;
-  showEditForm.value = false;
-};
-
-const editerForfait = (forfait) => {
-  editingId.value = forfait.id;
-  formData.value = { ...forfait };
-  showEditForm.value = true;
-};
-
 /**
- * Met à jour un forfait existant via l'API
+ * Naviguer vers la page d'édition du forfait
  */
-const sauvegarderModification = async () => {
-  try {
-    const response = await ForfaitsDataService.update(editingId.value, {
-      nom: formData.value.nom,
-      description: formData.value.description,
-      prix: parseFloat(formData.value.prix),
-      image: formData.value.image,
-      categorie: formData.value.categorie,
-    });
-
-    // Mettre à jour le forfait dans la liste
-    const index = forfaits.value.findIndex((f) => f.id === editingId.value);
-    if (index !== -1) {
-      forfaits.value[index] = {
-        ...forfaits.value[index],
-        ...formData.value,
-        prix: parseFloat(formData.value.prix),
-      };
-    }
-
-    resetForm();
-  } catch (err) {
-    console.error("Erreur lors de la modification du forfait:", err);
-    error.value = "Erreur lors de la modification du forfait";
-  }
+const editerForfait = (id) => {
+  router.push(`/forfaits/${id}`);
 };
 
 /**
@@ -168,95 +109,6 @@ const formatPrix = (val) => {
         >
           + Ajouter un forfait
         </RouterLink>
-
-        <!-- Formulaire de modification -->
-        <div v-if="showEditForm" class="bg-gray-100 p-6 rounded mt-4">
-          <h2 class="text-xl font-semibold text-gray-600 mb-6">
-            Modifier le forfait
-          </h2>
-          <form @submit.prevent="sauvegarderModification">
-            <div class="mb-4">
-              <label for="nom" class="block mb-2 font-bold text-gray-800"
-                >Nom du forfait:</label
-              >
-              <input
-                v-model="formData.nom"
-                type="text"
-                id="nom"
-                required
-                class="w-full p-2 border border-gray-300 rounded text-base"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="description"
-                class="block mb-2 font-bold text-gray-800"
-                >Description:</label
-              >
-              <textarea
-                v-model="formData.description"
-                id="description"
-                required
-                class="w-full p-2 border border-gray-300 rounded text-base resize-y min-h-20"
-              ></textarea>
-            </div>
-            <div class="mb-4">
-              <label for="prix" class="block mb-2 font-bold text-gray-800"
-                >Prix ($):</label
-              >
-              <input
-                v-model="formData.prix"
-                type="number"
-                id="prix"
-                step="0.01"
-                required
-                class="w-full p-2 border border-gray-300 rounded text-base"
-              />
-            </div>
-            <div class="mb-4">
-              <label for="image" class="block mb-2 font-bold text-gray-800"
-                >URL de l'image:</label
-              >
-              <input
-                v-model="formData.image"
-                type="url"
-                id="image"
-                class="w-full p-2 border border-gray-300 rounded text-base"
-                placeholder="https://..."
-              />
-            </div>
-            <div class="mb-4">
-              <label for="categorie" class="block mb-2 font-bold text-gray-800"
-                >Catégorie:</label
-              >
-              <select
-                v-model="formData.categorie"
-                id="categorie"
-                class="w-full p-2 border border-gray-300 rounded text-base"
-              >
-                <option value="">-- Sélectionnez une catégorie --</option>
-                <option v-for="cat in categories" :key="cat" :value="cat">
-                  {{ cat }}
-                </option>
-              </select>
-            </div>
-            <div class="flex gap-2">
-              <button
-                type="submit"
-                class="px-6 py-3 bg-blue-600 text-white rounded text-base transition-colors hover:bg-blue-700"
-              >
-                Modifier
-              </button>
-              <button
-                type="button"
-                @click="resetForm"
-                class="px-6 py-3 bg-gray-500 text-white rounded text-base transition-colors hover:bg-gray-600"
-              >
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
       </div>
 
       <!-- Liste des forfaits -->
@@ -326,7 +178,7 @@ const formatPrix = (val) => {
           <!-- Boutons d'action -->
           <div class="flex gap-2">
             <button
-              @click="editerForfait(forfait)"
+              @click="editerForfait(forfait.id)"
               class="flex-1 px-4 py-2 rounded bg-yellow-400 text-black font-semibold transition-colors hover:bg-yellow-500"
             >
               Modifier
