@@ -1,15 +1,48 @@
 <script setup>
-import HelloWorld from "./components/HelloWorld.vue";
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div id="app" class="min-h-screen bg-gray-50">
+    <nav class="bg-gray-800 py-4 shadow">
+      <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+        <router-link to="/" class="text-white text-xl font-bold transition-colors hover:text-blue-500">
+          Agence de Voyage
+        </router-link>
+        <ul class="flex list-none gap-8">
+          <li>
+            <router-link
+              to="/"
+              class="text-white no-underline px-4 py-2 rounded transition-colors hover:text-blue-500 hover:bg-blue-500/10"
+              active-class="text-blue-500 bg-blue-500/10"
+            >
+              Accueil
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              to="/forfaits"
+              class="text-white no-underline px-4 py-2 rounded transition-colors hover:text-blue-500 hover:bg-blue-500/10"
+              active-class="text-blue-500 bg-blue-500/10"
+            >
+              Forfaits
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              to="/a-propos"
+              class="text-white no-underline px-4 py-2 rounded transition-colors hover:text-blue-500 hover:bg-blue-500/10"
+              active-class="text-blue-500 bg-blue-500/10"
+            >
+              À Propos
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="max-w-6xl mx-auto px-4">
+      <router-view />
+    </main>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
+
+
