@@ -1,5 +1,7 @@
+<!-- Composant pour les boutons d'action (Soumettre et Annuler) -->
 <template>
   <div class="flex gap-4">
+    <!-- Bouton de soumission -->
     <button
       type="submit"
       :disabled="loading"
@@ -8,6 +10,7 @@
       {{ loading ? submittingLabel : submitLabel }}
     </button>
 
+    <!-- Bouton d'annulation -->
     <button
       type="button"
       @click="$emit('cancel')"
@@ -20,10 +23,11 @@
 </template>
 
 <script setup>
+// Définition des props du composant
 defineProps({
-  loading: { type: Boolean, default: false },
-  submitLabel: { type: String, default: "Ajouter le forfait" },
-  submittingLabel: { type: String, default: "Ajout en cours..." },
-  cancelLabel: { type: String, default: "Annuler" },
+  loading: { type: Boolean, default: false }, // Indique si un chargement est en cours
+  submitLabel: { type: String, default: "Ajouter le forfait" }, // Texte du bouton de soumission
+  submittingLabel: { type: String, default: "Ajout en cours..." }, // Texte affiché pendant le chargement
+  cancelLabel: { type: String, default: "Annuler" }, // Texte du bouton d'annulation
 });
 </script>

@@ -1,48 +1,55 @@
+<!-- Composant modal pour afficher les détails d'un forfait -->
 <script setup>
 import { computed } from "vue";
 
+// Définition des props du composant
 const props = defineProps({
   forfait: {
     type: Object,
-    default: null,
+    default: null, // Objet contenant les informations du forfait
   },
   show: {
     type: Boolean,
-    default: false,
+    default: false, // Contrôle l'affichage du modal
   },
 });
 
+// Définition des événements émis par le composant
 const emit = defineEmits(["close"]);
 
 /**
- * Ferme le modal
+ * Ferme le modal en émettant l'événement 'close'
  */
 const closeModal = () => {
   emit("close");
 };
 
 /**
- * Convertit et formate le prix
+ * Convertit une valeur en nombre pour le prix
+ * Gère différents formats d'entrée (nombre, chaîne avec virgules, etc.)
  */
 const parsePrix = (val) => {
   if (val === null || val === undefined) return 0;
   if (typeof val === "number") return val;
 
   let s = String(val).trim();
-  s = s.replace(/,/g, ".");
-  s = s.replace(/[^0-9.\-]/g, "");
+  s = s.replace(/,/g, "."); // Remplace les virgules par des points
+  s = s.replace(/[^0-9.\-]/g, ""); // Supprime tous les caractères non numériques
 
   const n = parseFloat(s);
   return Number.isFinite(n) ? n : 0;
 };
 
+/**
+ * Formate le prix avec 2 décimales
+ */
 const formatPrix = (val) => {
   const n = parsePrix(val);
   return n.toFixed(2);
 };
 
 /**
- * Formate la date
+ * Formate une date au format français (jour mois année)
  */
 const formatDate = (dateString) => {
   if (!dateString) return "—";
@@ -55,29 +62,32 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <!-- Overlay -->
+  <!-- Overlay avec transition fade -->
   <Transition name="fade">
+    <!-- Fond semi-transparent qui ferme le modal au clic -->
     <div
       v-if="show && forfait"
       class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       @click.self="closeModal"
     >
-      <!-- Modal Content -->
+      <!-- Contenu du modal -->
       <div
         class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden transform transition-all animate-scale-in"
       >
-        <!-- Header avec bouton fermer -->
+        <!-- En-tête avec image et boutons -->
         <div class="relative">
-          <!-- Image -->
+          <!-- Section image du forfait -->
           <div
             class="relative h-64 bg-linear-to-br from-blue-400 to-blue-600 overflow-hidden"
           >
+            <!-- Image du forfait si disponible -->
             <img
               v-if="forfait.image"
               :src="forfait.image"
               :alt="forfait.nom"
               class="w-full h-full object-cover"
             />
+            <!-- Icône par défaut si pas d'image -->
             <div
               v-else
               class="flex items-center justify-center h-full text-white text-8xl"
@@ -85,7 +95,7 @@ const formatDate = (dateString) => {
               🌍
             </div>
 
-            <!-- Badge catégorie -->
+            <!-- Badge de catégorie -->
             <div v-if="forfait.categorie" class="absolute top-4 left-4">
               <span
                 class="inline-block bg-white/90 backdrop-blur-sm text-blue-800 text-sm font-semibold px-4 py-2 rounded-full shadow-lg"
@@ -94,12 +104,13 @@ const formatDate = (dateString) => {
               </span>
             </div>
 
-            <!-- Bouton fermer -->
+            <!-- Bouton de fermeture du modal -->
             <button
               @click="closeModal"
               class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-white hover:text-gray-900 transition-all shadow-lg focus:outline-none focus:ring-4 focus:ring-white/50"
               aria-label="Fermer le modal"
             >
+              <!-- Icône X pour fermer -->
               <svg
                 class="w-6 h-6"
                 fill="none"
@@ -117,14 +128,14 @@ const formatDate = (dateString) => {
           </div>
         </div>
 
-        <!-- Contenu scrollable -->
+        <!-- Contenu défilable du modal -->
         <div class="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
-          <!-- Titre -->
+          <!-- Titre du forfait -->
           <h2 class="text-3xl font-bold text-gray-900 mb-4">
             {{ forfait.nom }}
           </h2>
 
-          <!-- Prix -->
+          <!-- Section Prix -->
           <div class="mb-6 pb-6 border-b border-gray-200">
             <div class="flex items-baseline gap-2">
               <div class="text-4xl font-bold text-green-600">
@@ -134,11 +145,12 @@ const formatDate = (dateString) => {
             </div>
           </div>
 
-          <!-- Description -->
+          <!-- Section Description -->
           <div class="mb-6">
             <h3
               class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2"
             >
+              <!-- Icône d'information -->
               <svg
                 class="w-5 h-5 text-blue-600"
                 fill="none"
@@ -154,19 +166,21 @@ const formatDate = (dateString) => {
               </svg>
               Description
             </h3>
+            <!-- Texte de la description -->
             <p class="text-gray-700 leading-relaxed whitespace-pre-line">
               {{ forfait.description }}
             </p>
           </div>
 
-          <!-- Informations supplémentaires -->
+          <!-- Section Informations supplémentaires -->
           <div class="bg-gray-50 rounded-xl p-6 space-y-3">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">
               Informations
             </h3>
 
-            <!-- Catégorie -->
+            <!-- Catégorie du forfait -->
             <div class="flex items-center gap-3">
+              <!-- Icône d'étiquette -->
               <svg
                 class="w-5 h-5 text-gray-400"
                 fill="none"
@@ -190,6 +204,7 @@ const formatDate = (dateString) => {
 
             <!-- Date de création -->
             <div v-if="forfait.created_at" class="flex items-center gap-3">
+              <!-- Icône de calendrier -->
               <svg
                 class="w-5 h-5 text-gray-400"
                 fill="none"
@@ -213,6 +228,7 @@ const formatDate = (dateString) => {
 
             <!-- Date de mise à jour -->
             <div v-if="forfait.updated_at" class="flex items-center gap-3">
+              <!-- Icône d'horloge -->
               <svg
                 class="w-5 h-5 text-gray-400"
                 fill="none"
@@ -234,8 +250,9 @@ const formatDate = (dateString) => {
               </div>
             </div>
 
-            <!-- ID du forfait -->
+            <!-- Numéro d'identification du forfait -->
             <div class="flex items-center gap-3">
+              <!-- Icône de code -->
               <svg
                 class="w-5 h-5 text-gray-400"
                 fill="none"

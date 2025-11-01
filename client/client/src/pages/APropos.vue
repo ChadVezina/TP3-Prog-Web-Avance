@@ -1,4 +1,6 @@
+<!-- Page À propos de l'agence de voyage -->
 <script setup>
+// Importation des composants nécessaires
 import SectionHeader from "../components/SectionHeader.vue";
 import InfoCard from "../components/InfoCard.vue";
 import ValueItem from "../components/ValueItem.vue";
@@ -7,7 +9,7 @@ import ValueItem from "../components/ValueItem.vue";
 <template>
   <div class="a-propos-page py-12 px-4">
     <div class="max-w-5xl mx-auto">
-      <!-- Page Header -->
+      <!-- En-tête de la page -->
       <SectionHeader
         title="À Propos de Notre Agence"
         subtitle="Une passion pour les voyages, un engagement envers l'excellence"

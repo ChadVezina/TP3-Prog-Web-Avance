@@ -1,4 +1,6 @@
+<!-- Page d'accueil de l'application -->
 <script setup>
+// Importation des composants nécessaires
 import HeroSection from "../components/HeroSection.vue";
 import SectionHeader from "../components/SectionHeader.vue";
 import FeatureCard from "../components/FeatureCard.vue";
@@ -7,7 +9,7 @@ import StatsCard from "../components/StatsCard.vue";
 
 <template>
   <div class="accueil-page">
-    <!-- Hero Section -->
+    <!-- Section héro (bannière principale) -->
     <HeroSection
       title="Bienvenue à Notre Agence de Voyage"
       description="Découvrez le monde avec nous. Des expériences authentiques, des souvenirs inoubliables."

@@ -1,8 +1,11 @@
+<!-- Page pour ajouter un nouveau forfait -->
 <script setup>
+// Importation des fonctionnalités Vue
 import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import ForfaitsDataService from "../services/ForfaitsDataService.js";
 
+// Importation des composants de formulaire
 import FormInput from "../components/FormInput.vue";
 import FormTextarea from "../components/FormTextarea.vue";
 import FormSelect from "../components/FormSelect.vue";
@@ -11,7 +14,7 @@ import ErrorAlert from "../components/ErrorAlert.vue";
 
 const router = useRouter();
 
-// Form state using reactive for easier v-model bindings
+// État du formulaire avec les champs du forfait
 const form = reactive({
   nom: "",
   description: "",
@@ -20,12 +23,14 @@ const form = reactive({
   categorie: "",
 });
 
+// État des erreurs de validation par champ
 const fieldErrors = reactive({ nom: "", description: "", prix: "" });
-const generalError = ref(null);
-const loading = ref(false);
-const imageError = ref(false);
-const showImagePreview = ref(false);
+const generalError = ref(null); // Erreur générale
+const loading = ref(false); // Indicateur de chargement
+const imageError = ref(false); // Erreur de chargement d'image
+const showImagePreview = ref(false); // Affichage de l'aperçu d'image
 
+// Liste des catégories disponibles
 const categories = [
   "Europe",
   "Amérique",
@@ -37,7 +42,7 @@ const categories = [
   "Autre",
 ];
 
-// Watch for image URL changes to show/hide preview
+// Surveillance des changements d'URL d'image pour afficher/masquer l'aperçu
 watch(
   () => form.image,
   (newVal) => {
@@ -51,10 +56,12 @@ watch(
   }
 );
 
+// Gestionnaire d'erreur de chargement d'image
 const handleImageError = () => {
   imageError.value = true;
 };
 
+// Fonction de validation du formulaire
 function validate() {
   let valid = true;
   fieldErrors.nom = form.nom && form.nom.trim() ? "" : "Le nom est requis.";
@@ -75,13 +82,16 @@ function validate() {
   return valid;
 }
 
+// Fonction pour ajouter un nouveau forfait
 async function ajouterForfait() {
   generalError.value = null;
 
+  // Validation des champs avant soumission
   if (!validate()) return;
 
   loading.value = true;
   try {
+    // Envoi de la requête de création via le service
     await ForfaitsDataService.create({
       nom: form.nom.trim(),
       description: form.description.trim(),
@@ -89,10 +99,11 @@ async function ajouterForfait() {
       image: form.image ? form.image.trim() : "",
       categorie: form.categorie || "",
     });
+    // Redirection vers la liste des forfaits après succès
     router.push("/forfaits");
   } catch (err) {
     console.error("Erreur lors de l'ajout du forfait:", err);
-    // Prefer server message if available
+    // Affichage du message d'erreur du serveur ou message par défaut
     generalError.value =
       err.response?.data?.message ||
       "Une erreur est survenue. Veuillez réessayer.";
@@ -101,6 +112,7 @@ async function ajouterForfait() {
   }
 }
 
+// Fonction d'annulation qui redirige vers la liste des forfaits
 function annuler() {
   router.push("/forfaits");
 }
@@ -108,7 +120,7 @@ function annuler() {
 
 <template>
   <div class="min-h-screen bg-linear-to-b from-green-50 to-white">
-    <!-- Hero Header -->
+    <!-- En-tête de la page -->
     <div
       class="bg-linear-to-r from-green-600 to-green-800 text-white py-12 px-4 shadow-lg"
     >

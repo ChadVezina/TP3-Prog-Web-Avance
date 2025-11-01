@@ -1,15 +1,19 @@
+<!-- Composant de section héro (bannière principale) avec gradient et animations -->
 <template>
   <section
     class="hero-section relative overflow-hidden bg-linear-to-br from-blue-600 to-blue-800 text-white"
     :class="heightClass"
     role="banner"
   >
+    <!-- Overlay semi-transparent -->
     <div class="absolute inset-0 bg-black opacity-20"></div>
 
+    <!-- Contenu principal centré -->
     <div
       class="relative z-10 container mx-auto px-4 h-full flex items-center justify-center"
     >
       <div class="text-center max-w-4xl">
+        <!-- Titre principal avec animation -->
         <h1
           class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in"
           :class="{ 'sr-only': !title }"
@@ -17,6 +21,7 @@
           {{ title }}
         </h1>
 
+        <!-- Description (si fournie) -->
         <p
           v-if="description"
           class="text-lg md:text-xl lg:text-2xl mb-8 text-blue-100 leading-relaxed animate-fade-in-delay"
@@ -24,10 +29,12 @@
           {{ description }}
         </p>
 
+        <!-- Boutons d'appel à l'action -->
         <div
           v-if="showCta"
           class="flex flex-wrap gap-4 justify-center animate-fade-in-delay-2"
         >
+          <!-- Bouton principal CTA (Call To Action) -->
           <router-link
             v-if="ctaLink"
             :to="ctaLink"
@@ -35,6 +42,7 @@
             :aria-label="ctaAriaLabel || ctaText"
           >
             {{ ctaText }}
+            <!-- Flèche optionnelle -->
             <svg
               v-if="showArrow"
               class="ml-2 w-5 h-5"
@@ -52,11 +60,13 @@
             </svg>
           </router-link>
 
+          <!-- Slot pour boutons CTA supplémentaires -->
           <slot name="additional-cta"></slot>
         </div>
       </div>
     </div>
 
+    <!-- Vagues décoratives en bas de la section -->
     <div class="absolute bottom-0 left-0 right-0">
       <svg
         class="waves"
@@ -66,11 +76,13 @@
         shape-rendering="auto"
       >
         <defs>
+          <!-- Définition du chemin de la vague -->
           <path
             id="gentle-wave"
             d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
           />
         </defs>
+        <!-- Groupe de vagues avec effet de parallaxe -->
         <g class="parallax">
           <use href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
           <use href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
@@ -85,42 +97,44 @@
 <script setup>
 import { computed } from "vue";
 
+// Définition des props du composant
 const props = defineProps({
   title: {
     type: String,
-    required: true,
+    required: true, // Titre principal (requis)
   },
   description: {
     type: String,
-    default: "",
+    default: "", // Description optionnelle
   },
   ctaText: {
     type: String,
-    default: "En savoir plus",
+    default: "En savoir plus", // Texte du bouton CTA
   },
   ctaLink: {
     type: String,
-    default: "",
+    default: "", // Lien du bouton CTA
   },
   ctaAriaLabel: {
     type: String,
-    default: "",
+    default: "", // Label d'accessibilité pour le CTA
   },
   showCta: {
     type: Boolean,
-    default: true,
+    default: true, // Afficher le bouton CTA
   },
   showArrow: {
     type: Boolean,
-    default: true,
+    default: true, // Afficher la flèche dans le bouton
   },
   height: {
     type: String,
-    default: "large",
+    default: "large", // Hauteur de la section (small, medium, large)
     validator: (value) => ["small", "medium", "large"].includes(value),
   },
 });
 
+// Classe CSS calculée pour la hauteur de la section
 const heightClass = computed(() => {
   const heights = {
     small: "h-64 md:h-80",

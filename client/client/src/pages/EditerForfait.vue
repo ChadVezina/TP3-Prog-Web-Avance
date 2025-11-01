@@ -1,8 +1,11 @@
+<!-- Page pour éditer un forfait existant -->
 <script setup>
+// Importation des fonctionnalités Vue
 import { reactive, ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ForfaitsDataService from "../services/ForfaitsDataService.js";
 
+// Importation des composants de formulaire
 import FormInput from "../components/FormInput.vue";
 import FormTextarea from "../components/FormTextarea.vue";
 import FormSelect from "../components/FormSelect.vue";
@@ -12,7 +15,7 @@ import ErrorAlert from "../components/ErrorAlert.vue";
 const router = useRouter();
 const route = useRoute();
 
-// Form state using reactive for easier v-model bindings
+// État du formulaire avec les champs du forfait
 const form = reactive({
   nom: "",
   description: "",
@@ -21,13 +24,15 @@ const form = reactive({
   categorie: "",
 });
 
+// État des erreurs de validation par champ
 const fieldErrors = reactive({ nom: "", description: "", prix: "" });
-const generalError = ref(null);
-const loading = ref(false);
-const loadingData = ref(true);
-const imageError = ref(false);
-const showImagePreview = ref(false);
+const generalError = ref(null); // Erreur générale
+const loading = ref(false); // Indicateur de chargement de la soumission
+const loadingData = ref(true); // Indicateur de chargement des données
+const imageError = ref(false); // Erreur de chargement d'image
+const showImagePreview = ref(false); // Affichage de l'aperçu d'image
 
+// Liste des catégories disponibles
 const categories = [
   "Europe",
   "Amérique",
@@ -39,7 +44,7 @@ const categories = [
   "Autre",
 ];
 
-// Watch for image URL changes to show/hide preview
+// Surveillance des changements d'URL d'image pour afficher/masquer l'aperçu
 watch(
   () => form.image,
   (newVal) => {
@@ -53,14 +58,16 @@ watch(
   }
 );
 
+// Gestionnaire d'erreur de chargement d'image
 const handleImageError = () => {
   imageError.value = true;
 };
 
-// Charger les données du forfait
+// Chargement des données du forfait au montage du composant
 onMounted(async () => {
   const id = route.params.id;
 
+  // Vérification de la présence de l'ID dans l'URL
   if (!id) {
     generalError.value = "ID du forfait manquant.";
     loadingData.value = false;
@@ -68,9 +75,10 @@ onMounted(async () => {
   }
 
   try {
+    // Récupération des données du forfait depuis l'API
     const forfait = await ForfaitsDataService.get(id);
 
-    // Pré-remplir le formulaire avec les données existantes
+    // Pré-remplissage du formulaire avec les données existantes
     form.nom = forfait.nom || "";
     form.description = forfait.description || "";
     form.prix = forfait.prix;
@@ -85,6 +93,7 @@ onMounted(async () => {
   }
 });
 
+// Fonction de validation du formulaire
 function validate() {
   let valid = true;
   fieldErrors.nom = form.nom && form.nom.trim() ? "" : "Le nom est requis.";
@@ -105,15 +114,18 @@ function validate() {
   return valid;
 }
 
+// Fonction pour modifier le forfait existant
 async function modifierForfait() {
   generalError.value = null;
 
+  // Validation des champs avant soumission
   if (!validate()) return;
 
   const id = route.params.id;
   loading.value = true;
 
   try {
+    // Envoi de la requête de mise à jour via le service
     await ForfaitsDataService.update(id, {
       nom: form.nom.trim(),
       description: form.description.trim(),
@@ -121,9 +133,11 @@ async function modifierForfait() {
       image: form.image ? form.image.trim() : "",
       categorie: form.categorie || "",
     });
+    // Redirection vers la liste des forfaits après succès
     router.push("/forfaits");
   } catch (err) {
     console.error("Erreur lors de la modification du forfait:", err);
+    // Affichage du message d'erreur du serveur ou message par défaut
     generalError.value =
       err.response?.data?.message ||
       "Une erreur est survenue. Veuillez réessayer.";
@@ -132,6 +146,7 @@ async function modifierForfait() {
   }
 }
 
+// Fonction d'annulation qui redirige vers la liste des forfaits
 function annuler() {
   router.push("/forfaits");
 }
@@ -139,7 +154,7 @@ function annuler() {
 
 <template>
   <div class="min-h-screen bg-linear-to-b from-purple-50 to-white">
-    <!-- Hero Header -->
+    <!-- En-tête de la page -->
     <div
       class="bg-linear-to-r from-purple-600 to-purple-800 text-white py-12 px-4 shadow-lg"
     >

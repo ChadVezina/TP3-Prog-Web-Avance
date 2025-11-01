@@ -1,4 +1,6 @@
+<!-- Page de liste des forfaits avec filtres, recherche et gestion CRUD -->
 <script setup>
+// Importation des fonctionnalités Vue et composants
 import { ref, onMounted, computed } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import ForfaitsDataService from "../services/ForfaitsDataService.js";
@@ -7,16 +9,17 @@ import ForfaitModal from "../components/ForfaitModal.vue";
 
 const router = useRouter();
 
-const forfaits = ref([]);
-const loading = ref(false);
-const error = ref(null);
-const searchQuery = ref("");
-const selectedCategorie = ref("");
-const sortBy = ref("recent");
-const showDeleteConfirm = ref(false);
-const forfaitToDelete = ref(null);
-const showForfaitModal = ref(false);
-const selectedForfait = ref(null);
+// États réactifs pour la gestion des forfaits
+const forfaits = ref([]); // Liste complète des forfaits
+const loading = ref(false); // Indicateur de chargement
+const error = ref(null); // Message d'erreur
+const searchQuery = ref(""); // Terme de recherche
+const selectedCategorie = ref(""); // Catégorie sélectionnée pour le filtre
+const sortBy = ref("recent"); // Critère de tri
+const showDeleteConfirm = ref(false); // Affichage de la modal de confirmation de suppression
+const forfaitToDelete = ref(null); // Forfait à supprimer
+const showForfaitModal = ref(false); // Affichage de la modal de détails
+const selectedForfait = ref(null); // Forfait sélectionné pour afficher les détails
 
 /**
  * Récupère la liste de tous les forfaits depuis l'API
@@ -73,7 +76,7 @@ const supprimerForfait = async () => {
 
   try {
     await ForfaitsDataService.delete(forfaitToDelete.value.id);
-    // Retirer le forfait de la liste
+    // Retirer le forfait de la liste locale
     forfaits.value = forfaits.value.filter(
       (f) => f.id !== forfaitToDelete.value.id
     );
@@ -88,33 +91,35 @@ const supprimerForfait = async () => {
 };
 
 /**
- * Convertit différentes représentations de prix en nombre et renvoie une chaîne formatée
+ * Convertit différentes représentations de prix en nombre
  * Accepte des nombres, des chaînes contenant des nombres (ex: "123.45", "123,45", "$123.45")
- * Retourne toujours une chaîne avec 2 décimales (ex: "0.00", "123.45").
+ * Retourne un nombre (ex: 0, 123.45)
  */
 const parsePrix = (val) => {
   if (val === null || val === undefined) return 0;
   if (typeof val === "number") return val;
 
-  // Normaliser en string
+  // Normalisation en chaîne
   let s = String(val).trim();
-  // Remplacer la virgule décimale par un point (fr-FR -> 123,45)
+  // Remplacement de la virgule décimale par un point (format français)
   s = s.replace(/,/g, ".");
-  // Enlever tout caractère non numérique sauf le point et le signe -
+  // Suppression de tous les caractères non numériques sauf le point et le signe moins
   s = s.replace(/[^0-9.\-]/g, "");
 
   const n = parseFloat(s);
   return Number.isFinite(n) ? n : 0;
 };
 
+/**
+ * Formate le prix avec 2 décimales
+ */
 const formatPrix = (val) => {
   const n = parsePrix(val);
-  // toFixed existe toujours sur les Number primitives
   return n.toFixed(2);
 };
 
 /**
- * Liste unique des catégories disponibles
+ * Liste unique des catégories disponibles (calculée dynamiquement)
  */
 const categories = computed(() => {
   const cats = new Set();
@@ -127,12 +132,12 @@ const categories = computed(() => {
 });
 
 /**
- * Forfaits filtrés et triés
+ * Forfaits filtrés et triés selon les critères sélectionnés
  */
 const forfaitsFiltres = computed(() => {
   let result = [...forfaits.value];
 
-  // Filtre par recherche
+  // Filtre par recherche textuelle
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase();
     result = result.filter(
@@ -148,19 +153,23 @@ const forfaitsFiltres = computed(() => {
     result = result.filter((f) => f.categorie === selectedCategorie.value);
   }
 
-  // Tri
+  // Tri selon le critère sélectionné
   switch (sortBy.value) {
     case "price-asc":
+      // Prix croissant
       result.sort((a, b) => parsePrix(a.prix) - parsePrix(b.prix));
       break;
     case "price-desc":
+      // Prix décroissant
       result.sort((a, b) => parsePrix(b.prix) - parsePrix(a.prix));
       break;
     case "name":
+      // Alphabétique par nom
       result.sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
       break;
     case "recent":
     default:
+      // Plus récents d'abord
       result.sort((a, b) => {
         const dateA = new Date(b.created_at || 0);
         const dateB = new Date(a.created_at || 0);
@@ -173,7 +182,7 @@ const forfaitsFiltres = computed(() => {
 });
 
 /**
- * Réinitialise tous les filtres
+ * Réinitialise tous les filtres aux valeurs par défaut
  */
 const resetFilters = () => {
   searchQuery.value = "";
@@ -200,7 +209,7 @@ const fermerModal = () => {
 
 <template>
   <div class="min-h-screen bg-linear-to-b from-blue-50 to-white">
-    <!-- Hero Header -->
+    <!-- En-tête de la page -->
     <div
       class="bg-linear-to-r from-blue-600 to-blue-800 text-white py-12 px-4 shadow-lg"
     >
